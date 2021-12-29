@@ -7,45 +7,54 @@ import openpyxl
 
 # loading the excel sheet
 wb = openpyxl.load_workbook('/Users/sreejith/Downloads/voting.xlsx')
-print(wb.sheetnames)
+# print(wb.sheetnames)
 
 # Getting Sheet1
 sheet = wb['Sheet1']
 
-# Getting value in cell 'A1', but preferred method when using loops is: sheet.cell(row_num, col_num).value
-# print(sheet['A1'].value)
-
 # Initilizing the dictionary with agents as keys, based on max row in sheet
 # preferences_dict = {key: [] for key in range(1, sheet.max_row+1)}
 
-# Below method of initializing does not work, as each list references the other lists!! 
-# (When using dict.fromkeys(..., default_value), make sure default_value is not of a type that requires a constructor (like list), 
-# else you'll get references to the same object in all your buckets.)
-# preferences_dict = dict.fromkeys(range(1, sheet.max_row+1), [])
-
 preferences_dict = {}
 
-# print('Initialized preferences dictionary:', preferences_dict)
-
-# print('Max row: ', sheet.max_row, 'Max column: ', sheet.max_column)
-
 for row in range(1, sheet.max_row+1):
-    # print("\n\nEntered row :", row)
-
     key = row
     if key not in preferences_dict.keys():
         preferences_dict[key] = []
 
     # Looping through the entire column values for each row
     for col in range(1, sheet.max_column+1):
-        # print('For row :', row, ', Entered column :', col)
-
         # Appending each column value to the list for each row
         preferences_dict[key].append(sheet.cell(row, col).value)
         
-        # print(f'Appending value to preferences_dict[{key}]: with value in cell {row,col}')
-        # print(f'preferences dict[{key}]: {preferences_dict[key]}')
-
         # print(sheet.cell(row, col).value)
 
-print('\n\nPopulated preferences dictionary: ', preferences_dict)
+# print('\n\nPopulated preferences dictionary: ', preferences_dict)
+
+temp_dict = {}
+for key, value in preferences_dict.items():
+    # print(dict(enumerate(value)))
+
+    for i, element in enumerate(value):
+        # Creating a temp_dict, with index values of list as keys, and list elements as dictionary values
+        temp_dict[i+1] = element
+
+    # print(temp_dict)
+
+    # To get sorted values from dictionary
+    # print(sorted(temp_dict.values())[::-1])
+
+    # To get only matching keys of sorted values from dictionary
+    # print(sorted(temp_dict, key=temp_dict.get)[::-1])
+
+    # reverse=True, for equal values gets the key with lowest value first ([::1] sorts that issue)
+    # print(sorted(temp_dict, key=temp_dict.get, reverse=True))
+
+    # Updating preferences dictionary with sorted indexes (keys) of temp_dict based on it's values
+    preferences_dict[key] = sorted(temp_dict, key=temp_dict.get)[::-1]
+
+    # To get sorted values and matching keys as a tuple from dictionary
+    # print(sorted(temp_dict.items(), key=lambda x:x[1])[::-1])
+
+
+print('\n\nSorted preferences dictionary: ', preferences_dict)
