@@ -84,6 +84,22 @@ def get_max_list(temp_dict):
     print(list_of_keys)
     return list_of_keys     
 
+
+def tiebreak_output(list, tiebreak, preferences):
+    if tiebreak == 'max':
+        print(max(list))
+    elif tiebreak == 'min':
+        print(min(list))
+    else:
+        agent = tiebreak
+        temp_dict = {}
+        for item in list:
+            temp_dict[item] = preferences[agent].index(item)
+        print(preferences[agent])
+        print(temp_dict)
+        print(min(temp_dict, key=temp_dict.get))
+
+
 def plurality(preferences, tiebreak):
     temp_dict = {}
     for key, value in preferences.items():
@@ -99,52 +115,26 @@ def plurality(preferences, tiebreak):
             temp_dict2[value] += 1
 
     print(temp_dict2)
-    list_of_keys = get_max_list(temp_dict2)
-    if tiebreak == 'max':
-        print(max(list_of_keys))
-    elif tiebreak == 'min':
-        print(min(list_of_keys))
-    else:
-        agent = tiebreak
-        temp_dict3 = {}
-        for item in list_of_keys:
-            temp_dict3[item] = preferences[agent].index(item)
-        print(preferences[agent])
-        print(temp_dict3)
-        print(min(temp_dict3, key=temp_dict3.get))
-        # print(max(temp_dict3, key=temp_dict3.get))
-
     # print(max(temp_dict2, key=temp_dict2.get))
     # print(max(temp_dict2, key=lambda key: temp_dict2[key]))
 
-
-    # for key, value in preferences.items():
-    #     preferences[key] = [0 for x in value if value.index]
+    list_of_keys = get_max_list(temp_dict2)
+    return tiebreak_output(list_of_keys, tiebreak, preferences)
+    
 
 def veto(preferences, tiebreak):
+    # initialise preferences_veto with keys as agents, and with values as 0
     preferences_veto = dict.fromkeys(preferences[1], 0)
     # print(preferences_veto)
     for value in preferences.values():
-        value = value[:-1]
-        for item in value:
+        # Add one to the value for every preference item, except for the last one
+        for item in value[:-1]:
             if item in preferences_veto.keys():
                 preferences_veto[item] += 1
     print(preferences_veto)
     list_of_keys = get_max_list(preferences_veto)
     print(list_of_keys)
-
-    if tiebreak == 'max':
-        print(max(list_of_keys))
-    elif tiebreak == 'min':
-        print(min(list_of_keys))
-    else:
-        agent = tiebreak
-        temp_dict = {}
-        for item in list_of_keys:
-            temp_dict[item] = preferences[agent].index(item)
-        print(preferences[agent])
-        print(temp_dict)
-        print(min(temp_dict, key=temp_dict.get))
+    return tiebreak_output(list_of_keys, tiebreak, preferences)
     
 
 # preferences_dictionary = {1: [4, 2, 1, 3], 
@@ -179,7 +169,7 @@ preferences_dictionary = {1: [4, 2, 1, 3],
 # plurality(preferences_dictionary, 1)
 
 
-veto(preferences_dictionary, 'max')
-veto(preferences_dictionary, 'min')
-veto(preferences_dictionary, 1)
+# veto(preferences_dictionary, 'max')
+# veto(preferences_dictionary, 'min')
+# veto(preferences_dictionary, 1)
 
