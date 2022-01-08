@@ -81,7 +81,7 @@ def get_max_list(temp_dict):
     for key, value in temp_dict.items():
         if value == max_value:
             list_of_keys.append(key)
-    print(list_of_keys)
+    # print(list_of_keys)
     return list_of_keys     
 
 
@@ -123,20 +123,57 @@ def plurality(preferences, tiebreak):
     
 
 def veto(preferences, tiebreak):
-    # initialise preferences_veto with keys as agents, and with values as 0
+    # initialise preferences_veto with keys as alternatives, and with values as 0
     preferences_veto = dict.fromkeys(preferences[1], 0)
     # print(preferences_veto)
-    for value in preferences.values():
-        # Add one to the value for every preference item, except for the last one
-        for item in value[:-1]:
-            if item in preferences_veto.keys():
+    print(preferences.values())
+    # loop through each list of alternatives, and add points based on veto rule
+    for alternative_list in preferences.values():
+        # Add one to the value for every 'alternative', except for the last one
+        for item in alternative_list[:-1]:
+            if item in preferences_veto.keys():   # check can be removed as all keys are already initialised and the same
                 preferences_veto[item] += 1
     print(preferences_veto)
+    # get list of winners (with most points)
     list_of_keys = get_max_list(preferences_veto)
+    print(list_of_keys)
+    # return the winner based on the tiebreak rule
+    return tiebreak_output(list_of_keys, tiebreak, preferences)
+    
+
+def borda(preferences, tiebreak):
+    # initialise preferences_borda with keys as agents, and with values as 0
+    preferences_borda = dict.fromkeys(preferences[1], 0)
+    # print(preferences_borda)
+    # get the number of alternatives
+    num_alternatives = len(preferences[1])
+
+    for value in preferences.values():
+        # Add value for every preference item, based on their rank position
+        for rank_position, item in enumerate(value, start=1):
+            if item in preferences_borda.keys(): # check can be removed as all keys are already initialised and the same
+                preferences_borda[item] += (num_alternatives - rank_position)
+    print(preferences_borda)
+    list_of_keys = get_max_list(preferences_borda)
     print(list_of_keys)
     return tiebreak_output(list_of_keys, tiebreak, preferences)
     
 
+def harmonic(preferences, tiebreak):
+    # initialise preferences_borda with keys as agents, and with values as 0
+    preferences_harmonic = dict.fromkeys(preferences[1], 0)
+    # print(preferences_harmonic)
+
+    for value in preferences.values():
+        # Add value for every preference item, based on their rank position
+        for rank_position, item in enumerate(value, start=1):
+            if item in preferences_harmonic.keys(): # check can be removed as all keys are already initialised and the same
+                preferences_harmonic[item] += (1/rank_position)
+    print(preferences_harmonic)
+    list_of_keys = get_max_list(preferences_harmonic)
+    print(list_of_keys)
+    return tiebreak_output(list_of_keys, tiebreak, preferences)
+  
 # preferences_dictionary = {1: [4, 2, 1, 3], 
 #                           2: [4, 3, 1, 2],
 #                           3: [4, 3, 1, 2],
@@ -155,21 +192,32 @@ def veto(preferences, tiebreak):
 #                           7: [1, 2, 3, 4],
 #                           8: [4, 2, 1, 3]}
 
-preferences_dictionary = {1: [4, 2, 1, 3], 
+# preferences_dictionary = {1: [4, 2, 1, 3], 
+#                           2: [4, 3, 1, 2],
+#                           3: [2, 3, 1, 4],
+#                           4: [1, 3, 4, 2],
+#                           5: [2, 3, 4, 1],
+#                           6: [2, 1, 3, 4],
+#                           7: [1, 2, 3, 4],
+#                           8: [4, 2, 5, 3]}
+
+preferences_dictionary = {1: [2, 4, 1, 3], 
                           2: [4, 3, 1, 2],
                           3: [2, 3, 1, 4],
-                          4: [1, 3, 4, 2],
-                          5: [2, 3, 4, 1],
-                          6: [2, 1, 3, 4],
-                          7: [1, 2, 3, 4],
-                          8: [4, 2, 5, 3]}
+                          }
 
 # plurality(preferences_dictionary, 'max')
 # plurality(preferences_dictionary, 'min')
 # plurality(preferences_dictionary, 1)
 
-
 # veto(preferences_dictionary, 'max')
 # veto(preferences_dictionary, 'min')
 # veto(preferences_dictionary, 1)
 
+# borda(preferences_dictionary, 'max')
+# borda(preferences_dictionary, 'min')
+# borda(preferences_dictionary, 1)
+
+harmonic(preferences_dictionary, 'max')
+harmonic(preferences_dictionary, 'min')
+harmonic(preferences_dictionary, 1)
