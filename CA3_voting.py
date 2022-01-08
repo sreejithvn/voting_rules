@@ -75,6 +75,15 @@ def dictatorship(preferenceProfile, agent):
 # for agent in range(1, 9):
 #     print(f'For agent {agent}: {dictatorship(generatePreferences("/Users/sreejith/Downloads/voting.xlsx"), agent)}')
 
+def get_max_list(temp_dict):
+    list_of_keys = []
+    max_value = max(temp_dict.values())
+    for key, value in temp_dict.items():
+        if value == max_value:
+            list_of_keys.append(key)
+    print(list_of_keys)
+    return list_of_keys     
+
 def plurality(preferences, tiebreak):
     temp_dict = {}
     for key, value in preferences.items():
@@ -90,12 +99,7 @@ def plurality(preferences, tiebreak):
             temp_dict2[value] += 1
 
     print(temp_dict2)
-    list_of_keys = []
-    max_value = max(temp_dict2.values())
-    for key, value in temp_dict2.items():
-        if value == max_value:
-            list_of_keys.append(key)
-    print(list_of_keys)
+    list_of_keys = get_max_list(temp_dict2)
     if tiebreak == 'max':
         print(max(list_of_keys))
     elif tiebreak == 'min':
@@ -110,28 +114,38 @@ def plurality(preferences, tiebreak):
         print(min(temp_dict3, key=temp_dict3.get))
         # print(max(temp_dict3, key=temp_dict3.get))
 
-
-
-    
-
     # print(max(temp_dict2, key=temp_dict2.get))
     # print(max(temp_dict2, key=lambda key: temp_dict2[key]))
-
-
-
-
-    if tiebreak == 'max':
-        print(max())
-
-
 
 
     # for key, value in preferences.items():
     #     preferences[key] = [0 for x in value if value.index]
 
+def veto(preferences, tiebreak):
+    preferences_veto = dict.fromkeys(preferences[1], 0)
+    # print(preferences_veto)
+    for value in preferences.values():
+        value = value[:-1]
+        for item in value:
+            if item in preferences_veto.keys():
+                preferences_veto[item] += 1
+    print(preferences_veto)
+    list_of_keys = get_max_list(preferences_veto)
+    print(list_of_keys)
 
-
-
+    if tiebreak == 'max':
+        print(max(list_of_keys))
+    elif tiebreak == 'min':
+        print(min(list_of_keys))
+    else:
+        agent = tiebreak
+        temp_dict = {}
+        for item in list_of_keys:
+            temp_dict[item] = preferences[agent].index(item)
+        print(preferences[agent])
+        print(temp_dict)
+        print(min(temp_dict, key=temp_dict.get))
+    
 
 # preferences_dictionary = {1: [4, 2, 1, 3], 
 #                           2: [4, 3, 1, 2],
@@ -158,11 +172,14 @@ preferences_dictionary = {1: [4, 2, 1, 3],
                           5: [2, 3, 4, 1],
                           6: [2, 1, 3, 4],
                           7: [1, 2, 3, 4],
-                          8: [4, 2, 1, 3]}
+                          8: [4, 2, 5, 3]}
 
-plurality(preferences_dictionary, 'max')
-plurality(preferences_dictionary, 'min')
-plurality(preferences_dictionary, 1)
+# plurality(preferences_dictionary, 'max')
+# plurality(preferences_dictionary, 'min')
+# plurality(preferences_dictionary, 1)
 
 
+veto(preferences_dictionary, 'max')
+veto(preferences_dictionary, 'min')
+veto(preferences_dictionary, 1)
 
