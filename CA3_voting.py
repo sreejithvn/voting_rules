@@ -1,12 +1,3 @@
-import openpyxl
-import pprint
-
-from openpyxl.descriptors.base import Length
-# import os
-
-# Go to folder where excel file is located
-# os.chdir('/Users/sreejith/Downloads')
-# print(os.getcwd())
 
 
 def generatePreferences(values):
@@ -16,15 +7,16 @@ def generatePreferences(values):
 
     preferences_dict = {}
 
+    # Looping through each row in sheet
     for row in range(1, values.max_row+1):
         agent = row
         if agent not in preferences_dict.keys():
             preferences_dict[agent] = []
 
         # Looping through the entire column values for each row
-        for col in range(1, values.max_column+1):
+        for column in range(1, values.max_column+1):
             # Appending each column value to the list for each row
-            preferences_dict[agent].append(values.cell(row, col).value)
+            preferences_dict[agent].append(values.cell(row, column).value)
 
     
 
@@ -60,16 +52,6 @@ def generatePreferences(values):
     # pprint.pprint(preferences_dict)
     return preferences_dict
 
-if __name__ == '__main__':
-    wb = openpyxl.load_workbook('/Users/sreejith/Downloads/voting.xlsx')
-    sheet = wb['Sheet1']
-
-    # For printing a dictionary properly
-    pp = pprint.PrettyPrinter(indent=4, width = 120)
-
-    # pprint.pprint(generatePreferences(sheet))
-
-# pprint.pprint(generatePreferences(sheet))
 
 def dictatorship(preferenceProfile, agent):
      return preferenceProfile[agent][0]
@@ -99,6 +81,7 @@ def get_min_list(temp_dict):
 
 def tiebreak_output(list, tieBreak, preferences):
     print('Checkout preferences', preferences)
+
     if tieBreak == 'max':
         print(max(list))
     elif tieBreak == 'min':
@@ -211,7 +194,10 @@ def harmonic(preferences, tieBreak):
 
 
 def STV(preferences, tieBreak):
-    temp_preferences = preferences
+    import copy
+    # temp_preferences = preferences.copy()
+    temp_preferences = copy.deepcopy(preferences)
+
     # temp_dict = {key: 0 for key in range(1, len(temp_preferences[1]))}
     temp_dict = dict.fromkeys(temp_preferences[1], 0)
     print('Initial temp dict: ', temp_dict)
@@ -234,7 +220,27 @@ def STV(preferences, tieBreak):
                 temp_dict.pop(key, None)
             print(f'Updated temp dict after removing key list {key_list}: \n{temp_dict}')
             
-        
+
+def rangeVoting(values, tieBreak):
+    valuation_sum = {}
+    
+    # Looping through each column in sheet
+    for column in range(1, values.max_column+1):
+        alternative = column
+        if alternative not in valuation_sum.keys():
+            valuation_sum[alternative] = 0
+
+        # Looping through the entire row values for each column
+        for row in range(1, values.max_row+1):
+            # Appending each column value to the list for each row
+            valuation_sum[alternative] += values.cell(row, column).value
+    # print(valuation_sum)
+
+    list_of_alternatives = get_max_list(valuation_sum)
+    print(list_of_alternatives)
+    return tiebreak_output(list_of_alternatives, tieBreak, generatePreferences(values))
+
+
 
 # preferences_dictionary = {1: [4, 2, 1, 3], 
 #                           2: [4, 3, 1, 2],
@@ -297,3 +303,34 @@ preferences_dictionary = {1: [4, 2, 1, 3],
 # STV(preferences_dictionary, 'min')
 # STV(preferences_dictionary, 1)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == '__main__':
+    import openpyxl
+    import pprint
+
+    # workbook = openpyxl.load_workbook('/Users/sreejith/Downloads/voting.xlsx')
+    workbook = openpyxl.load_workbook('/Users/sreejith/Downloads/range_voting.xlsx')
+    sheet = workbook.active
+
+    # For printing a dictionary properly
+    pp = pprint.PrettyPrinter(indent=4, width = 120)
+
+    # pprint.pprint(generatePreferences(sheet))
+    # pprint.pprint(rangeVoting(sheet, 'max'))
+
+
+# pprint.pprint(generatePreferences(sheet))
