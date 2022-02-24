@@ -93,7 +93,6 @@ def get_max_list(temp_dict):
     for key, value in temp_dict.items():
         if value == max_value:
             possible_winners.append(key)
-    # print(possible_winners)
     return possible_winners     
 
 
@@ -113,7 +112,6 @@ def get_min_list(temp_dict):
     for key, value in temp_dict.items():
         if value == min_value:
             least_frequency.append(key)
-    # print(least_frequency)
     return least_frequency  
 
 
@@ -402,7 +400,7 @@ if __name__ == '__main__':
     import openpyxl
     import pprint
 
-    workbook = openpyxl.load_workbook('/Users/sreejith/Downloads/voting.xlsx')
+    workbook = openpyxl.load_workbook('/projects/voting.xlsx')
     sheet = workbook.active
 
     pp = pprint.PrettyPrinter(indent=4, width = 120)
