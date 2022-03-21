@@ -2,7 +2,7 @@ import openpyxl
 import os
 
 # Go to folder where excel file is located
-os.chdir('/Users/sreejith/Downloads')
+os.chdir('/file_path') # enter 'file_path', as the path to folder where excel file is stored
 print(os.getcwd())
 
 # wb = openpyxl.Workbook()
